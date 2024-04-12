@@ -3,7 +3,7 @@ import requests
 class PostRequests:
     def __init__(self):
         pass
-    
+
     @classmethod
     def INPUT_TYPES(s):
         return {
@@ -15,7 +15,7 @@ class PostRequests:
             }
         }
 
-    RETUEN_TYPES = ()
+    RETURN_TYPES = ()
     OUTPUT_NODE = True
     FUNCTION = "run"
     CATEGORY = "RequestsPoster"
