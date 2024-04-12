@@ -1,2 +1,2 @@
 # ComfyUI-RequestsPoster
-This is a custom node that simply posts HttpRequest from ComfyUI.
+This custom node is that simply posts HttpRequest from ComfyUI.
