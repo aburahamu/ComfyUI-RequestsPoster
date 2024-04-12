@@ -10,7 +10,7 @@ class RequestSettings:
                 "text_value": ("STRING", {"multiline": False})
             }
         }
-    RETURN_TYPES = ("STRING", "STRING", "STRING")
+    RETURN_TYPES = ("text_url", "text_key", "text_value")
     FUNCTION = "run"
     CATEGORY = "RequestSettings"
 
@@ -48,6 +48,6 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "RequestSettings": "RequestSettings",
-    "PostRequests": "PostRequests",
+    "RequestsPoster": "RequestSettings",
+    "RequestsPoster": "PostRequests",
 }
