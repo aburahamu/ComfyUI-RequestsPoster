@@ -1,34 +1,45 @@
 import requests
 
 class PostRequests:
+    def __init__(self):
+        pass
+    
     @classmethod
     def INPUT_TYPES(s):
         return {
             "required": {
-                "text_url": ("STRING", {"multiline": False, "default": "https://~"}),
-                "text_key": ("STRING", {"multiline": False, "default": "content"}),
-                "text_value": ("STRING", {"multiline": False, "default": "Hello, World!!"}),
+                "url": ("STRING", {"multiline": False, "default": "https://~"}),
+                "key": ("STRING", {"multiline": False, "default": "content"}),
+                "value": ("STRING", {"multiline": False, "default": "Hello, World!!"}),
                 "image": ("IMAGE",),
             }
         }
-    
-    RETURN_TYPES = ()
-    FUNCTION = "run"
-    CATEGORY = "RequestSettings"
 
-    def run(self, text_url, text_key, text_value, image):
-        url = text_url
-        data = {text_key: text_value}
-        response = requests.post(url, data=data)
+    RETUEN_TYPES = ()
+    OUTPUT_NODE = True
+    FUNCTION = "run"
+    CATEGORY = "RequestsPoster"
+
+    def run(self, url, key, value, image):
+        data = {key: value}
+        response = requests.post(url, data)
 
         print(response.status_code)
         print(response.text)
-        return (response.text)
+        return ()
 
 NODE_CLASS_MAPPINGS = {
     "PostRequests": PostRequests,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "RequestsPoster": "PostRequests",
+    "PostRequests": "PostRequests",
 }
+
+#PostRequests.run(
+#    "",
+#    "https://discord.com/api/webhooks/1228320912701390888/vkaex8-k7PL88S2d70jApzVILpFhaYkzvgrbh9w1rKZGixA-9zTt178lVJam_6khHMN3",
+#    "content",
+#    "Test, World!!",
+#    "test"
+#)
