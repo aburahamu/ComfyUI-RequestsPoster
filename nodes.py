@@ -15,15 +15,15 @@ class TextSend:
     
     RETURN_TYPES = ()
     FUNCTION = "run"
-    CATEGORY = "MyCustomClient"
+    CATEGORY = "RequestsPoster"
 
     def run(self, text_url, text_key, text_value):
-        url = text_url  # 送信先のURL
-        data = {text_key: text_value}  # 送信するデータ
+        url = text_url
+        data = {text_key: text_value}
         response = requests.post(url, data=data)
 
-        print(response.status_code)  # レスポンスのステータスコードを表示
-        print(response.text)  # レスポンスの内容を表示
+        print(response.status_code)
+        print(response.text)
         return (response.text)
 
 NODE_CLASS_MAPPINGS = {
