@@ -11,6 +11,7 @@ class PostRequests:
                 "url": ("STRING", {"multiline": False, "default": "https://~"}),
                 "key": ("STRING", {"multiline": False, "default": "content"}),
                 "value": ("STRING", {"multiline": False, "default": "Hello, World!!"}),
+                "seed": ("INT:seed", {}),
                 "image": ("IMAGE",),
             }
         }
@@ -20,7 +21,7 @@ class PostRequests:
     FUNCTION = "run"
     CATEGORY = "RequestsPoster"
 
-    def run(self, url, key, value, image):
+    def run(self, url, key, value, seed, image):
         data = {key: value}
         response = requests.post(url, data)
 
@@ -35,11 +36,3 @@ NODE_CLASS_MAPPINGS = {
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PostRequests": "PostRequests",
 }
-
-#PostRequests.run(
-#    "",
-#    "https://discord.com/api/webhooks/1228320912701390888/vkaex8-k7PL88S2d70jApzVILpFhaYkzvgrbh9w1rKZGixA-9zTt178lVJam_6khHMN3",
-#    "content",
-#    "Test, World!!",
-#    "test"
-#)
