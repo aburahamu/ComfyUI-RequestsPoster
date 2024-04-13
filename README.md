@@ -3,20 +3,20 @@
 This custom node is that simply posts HttpRequest from ComfyUI.<br>
 
 # インストール方法
-下記のどちらかでインストールできます
-A）ComfyUI-Managerの「Install via Git URL」でこのリポジトリのURLをコピペしてください。
-
-B）ComfyUI > Cutom_nodesのフォルダをコマンドプロンプトで開き下記コマンドを実行してください。
-git clone https://github.com/aburahamu/ComfyUI-RequestsPoster.git
-
-これでインストールは完了です。ComfyUIを再起動してください。
+下記のどちらかでインストールできます<br>
+A）ComfyUI-Managerの「Install via Git URL」でこのリポジトリのURLをコピペしてください。<br>
+<br>
+B）ComfyUI > Cutom_nodesのフォルダをコマンドプロンプトで開き下記コマンドを実行してください。<br>
+git clone https://github.com/aburahamu/ComfyUI-RequestsPoster.git<br>
+<br>
+これでインストールは完了です。ComfyUIを再起動してください。<br>
 
 # 使い方
-1)AddNode > RequestsPoster > PostRequest でノードを追加する
-2)anyにトリガーとしたいノードを繋ぐ
-3)urlにリクエストを投げたいURLをコピペする　例）ディスコードのウェブフックURL
-4)keyとvalueにそれぞれリクエストに含めたい文字列を入力する
-5)Queueする
+1)AddNode > RequestsPoster > PostRequest でノードを追加する<br>
+2)anyにトリガーとしたいノードを繋ぐ<br>
+3)urlにリクエストを投げたいURLをコピペする　例）ディスコードのウェブフックURL<br>
+4)keyとvalueにそれぞれリクエストに含めたい文字列を入力する<br>
+5)Queueする<br>
 
 # 使用例<br>
 DiscordのサーバーにWebhookを使ってメッセージを投稿させられます。<br>
