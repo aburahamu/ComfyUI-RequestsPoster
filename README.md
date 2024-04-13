@@ -4,7 +4,8 @@ This custom node is that simply posts HttpRequest from ComfyUI.<br>
 
 # インストール方法
 下記のどちらかでインストールできます<br>
-A）ComfyUI-Managerの「Install via Git URL」でこのリポジトリのURLをコピペしてください。<br>
+A）ComfyUI-Managerの「Install via Git URL」でこのリポジトリのクローン用URLをコピペしてください。<br>
+　　クローン用URLはこのページの上部にある緑色のボタン「<> Code」を押すと表示されます。<br>
 <br>
 B）ComfyUI > Cutom_nodesのフォルダをコマンドプロンプトで開き下記コマンドを実行してください。<br>
 git clone https://github.com/aburahamu/ComfyUI-RequestsPoster.git<br>
@@ -15,7 +16,7 @@ git clone https://github.com/aburahamu/ComfyUI-RequestsPoster.git<br>
 1)AddNode > RequestsPoster > PostRequest でノードを追加する<br>
 2)anyにトリガーとしたいノードを繋ぐ<br>
 3)urlにリクエストを投げたいURLをコピペする　例）ディスコードのウェブフックURL<br>
-4)keyとvalueにそれぞれリクエストに含めたい文字列を入力する<br>
+4)keyとvalueにそれぞれリクエストに含めたい文字列を入力する　例）key = content、value = 画像が出来ました<br>
 5)Queueする<br>
 
 # 使用例<br>
