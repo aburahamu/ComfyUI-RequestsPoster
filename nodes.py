@@ -12,7 +12,7 @@ class PostRequests:
                 "key": ("STRING", {"multiline": False, "default": "content"}),
                 "value": ("STRING", {"multiline": False, "default": "Hello, World!!"}),
                 "seed": ("INT:seed", {}),
-                "image": ("IMAGE",),
+                "any": (any, {}),
             }
         }
 
@@ -21,12 +21,10 @@ class PostRequests:
     FUNCTION = "run"
     CATEGORY = "RequestsPoster"
 
-    def run(self, url, key, value, seed, image):
+    def run(self, url, key, value, seed, any):
         data = {key: value}
         response = requests.post(url, data)
-
-        print(response.status_code)
-        print(response.text)
+        print(response)
         return ()
 
 NODE_CLASS_MAPPINGS = {
