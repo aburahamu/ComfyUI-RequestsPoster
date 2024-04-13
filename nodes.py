@@ -1,5 +1,11 @@
 import requests
 
+class AnyType(str):
+    def __ne__(self, __value: object) -> bool:
+        return False
+
+any = AnyType("*")
+
 class PostRequests:
     def __init__(self):
         pass
