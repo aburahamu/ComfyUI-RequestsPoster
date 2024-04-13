@@ -6,7 +6,7 @@ class AnyType(str):
 
 any = AnyType("*")
 
-class PostRequests:
+class PostText:
     def __init__(self):
         pass
 
@@ -19,12 +19,13 @@ class PostRequests:
                 "value": ("STRING", {"multiline": False, "default": "Hello, World!!"}),
                 "seed": ("INT:seed", {}),
                 "any": (any, {}),
-            }
+            },
         }
 
-    RETURN_TYPES = ()
-    OUTPUT_NODE = True
     FUNCTION = "run"
+    OUTPUT_NODE = True
+    RETURN_TYPES = ()
+
     CATEGORY = "RequestsPoster"
 
     def run(self, url, key, value, seed, any):
@@ -34,9 +35,9 @@ class PostRequests:
         return ()
 
 NODE_CLASS_MAPPINGS = {
-    "PostRequests": PostRequests,
+    "PostText": PostText
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PostRequests": "PostRequests",
+    "PostText": "PostText"
 }
