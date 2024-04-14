@@ -1,5 +1,7 @@
 # ComfyUI-RequestsPoster
 * 入力（any）に反応して指定のURLにrequests.post(url,{key:value})を投げられます。
+* 画像の入力に反応してDiscordのWebhookURLに文章と画像を投稿できます。
+* 画像の入力に反応してX（Twitter）に文章と画像を投稿できます。
 * X（Twitter）にポストする機能を使う場合、ComfyUIが利用するPython環境に「tweepy」モジュールが入っている必要があります。
 
 # インストール方法
@@ -11,21 +13,6 @@
 
 これでインストールは完了です。ComfyUIを再起動してください。<br>
 ※Xへの投稿機能を使う場合は必要モジュールもインストールが必要です。<br>
-
-# Xへの投稿に必要なモジュールのインストール方法
-## 概要
-* Xの開発用アカウントを取得してください。
-* Consumer Keysの「API Key」と「API Key Secret」の2つをメモしておいてください。
-* Authentication Tokensの「Access Token」と「Access Token Secret」の2つをメモしておいてください。
-* ComfyUIが利用しているPython環境に「tweepy」モジュールをインストールしてください。
-## 手順　※ComfyUIがvenvを使っている場合で解説しています
-1. ComfyUIが参照している仮想環境をアクティベートする<br>
-![04_venvActivate](https://github.com/aburahamu/ComfyUI-RequestsPoster/assets/166828042/c02fbf7e-b480-40f2-99d5-78c2919f60a5)
-
-2. 仮想環境に入ったら「pip install tweepy」と入力しエンターを押す<br>
-![05_input_pipinstalltweepy](https://github.com/aburahamu/ComfyUI-RequestsPoster/assets/166828042/a9d6e9ce-f283-4d97-b9d1-632ed9c8653b)
-
-完了です。
 
 # アップデート方法
 ## 概要<br>
@@ -43,6 +30,21 @@ ComfyUI > custom_nodes > ComfyUI-RequestsPoster をコマンドプロンプト�
 
 完了です。<br>
 
+# Xへの投稿に必要なモジュールのインストール方法
+## 概要
+* Xの開発用アカウントを取得してください。
+* Consumer Keysの「API Key」と「API Key Secret」の2つをメモしておいてください。
+* Authentication Tokensの「Access Token」と「Access Token Secret」の2つをメモしておいてください。
+* ComfyUIが利用しているPython環境に「tweepy」モジュールをインストールしてください。
+## 手順　※ComfyUIがvenvを使っている場合で解説しています
+1. ComfyUIが参照している仮想環境をアクティベートする<br>
+![04_venvActivate](https://github.com/aburahamu/ComfyUI-RequestsPoster/assets/166828042/c02fbf7e-b480-40f2-99d5-78c2919f60a5)
+
+2. 仮想環境に入ったら「pip install tweepy」と入力しエンターを押す<br>
+![05_input_pipinstalltweepy](https://github.com/aburahamu/ComfyUI-RequestsPoster/assets/166828042/a9d6e9ce-f283-4d97-b9d1-632ed9c8653b)
+
+完了です。
+
 # 使い方（テキストの送信：PostText）
 1. AddNode > RequestsPoster > PostText でノードを追加する
 2. anyにトリガーとしたいノードを繋ぐ
@@ -50,10 +52,7 @@ ComfyUI > custom_nodes > ComfyUI-RequestsPoster をコマンドプロンプト�
 4. keyとvalueにそれぞれリクエストに含めたい文字列を入力する　例）key = content、value = 画像が出来ました
 5. Queueする
 
-# 使用例
-DiscordのサーバーにWebhookを使ってメッセージを投稿させられます。
-
-# WebhookURLの取得方法
+# DiscordのWebhookURLの取得方法
 1. 左下の「＋」を押してサーバーを追加して、作られたサーバーの歯車アイコンを押す<br>
 ![02_addServer](https://github.com/aburahamu/ComfyUI-RequestsPoster/assets/166828042/a9c2b8d9-0a21-4eeb-9409-6c5a82a3b9d4)
 
@@ -68,6 +67,13 @@ DiscordのサーバーにWebhookを使ってメッセージを投稿させられ
 
 5. 画像を生成すると、ディスコードにメッセージが投稿されます<br>
 ![05_HelloWorld](https://github.com/aburahamu/ComfyUI-RequestsPoster/assets/166828042/058960e2-0983-4b8c-be35-ca5bd2aa7cb0)
+
+# 使い方（Discordへの投稿：PostImage2Discord）
+1. AddNode > RequestsPoster > PostImage2Discord でノードを追加する
+2. imageに投稿したいimageを繋ぐ
+3. textに投稿したい文章を書く
+4. urlにDiscordのWebhookURLをコピペする
+5. Queueする
 
 # 使い方（Xへの投稿：PostImage2X）
 1. AddNode > RequestsPoster > PostImage2X でノードを追加する
