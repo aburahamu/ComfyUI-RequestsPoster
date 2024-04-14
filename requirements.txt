@@ -1,1 +1,4 @@
 requests
+tweepy
+Pillow
+numpy
