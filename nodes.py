@@ -61,6 +61,7 @@ class PostImage2X:
                 "text_consumer_secret": ("STRING", {"multiline": False}),
                 "text_access_token": ("STRING", {"multiline": False}),
                 "text_access_token_secret": ("STRING", {"multiline": False}),
+                "fsfo": ("BOOLEAN", {"default": False}), #for_super_follower_only
             },
         }
 
@@ -92,7 +93,7 @@ class PostImage2X:
         return fullpath
 
     # Xに投稿する関数
-    def run(self, images, text_message, text_consumer_key, text_consumer_secret, text_access_token, text_access_token_secret, filename_prefix="comfyUI"):
+    def run(self, images, text_message, fsfo, text_consumer_key, text_consumer_secret, text_access_token, text_access_token_secret, filename_prefix="comfyUI"):
         # TweepyのAPIオブジェクトを作成
         auth = tweepy.OAuthHandler(text_consumer_key, text_consumer_secret)
         auth.set_access_token(text_access_token, text_access_token_secret)
@@ -110,7 +111,11 @@ class PostImage2X:
         image_path = self.GetSaveImagePath(images=images, filename_prefix=filename_prefix)
         message = text_message
         media = api.media_upload(filename=image_path)
-        result = client.create_tweet(text=message, media_ids=[media.media_id])
+        result = client.create_tweet(
+            text=message, 
+            media_ids=[media.media_id],
+            for_super_followers_only=fsfo,
+        )
 
         print(result)
         return ()
