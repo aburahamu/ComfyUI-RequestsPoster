@@ -14,9 +14,9 @@
 
 # Xへの投稿に必要なモジュールのインストール方法
 ## 概要
-* *Xの開発用アカウントを取得してください。
+* Xの開発用アカウントを取得してください。
 * Consumer Keysの「API Key」と「API Key Secret」の2つをメモしておいてください。
-* Authentication Tokensの「Bearer Token」と「Access Token」と「Access Token Secret」の3つをメモしておいてください。
+* Authentication Tokensの「Access Token」と「Access Token Secret」の2つをメモしておいてください。
 * ComfyUIが利用しているPython環境に「tweepy」モジュールをインストールしてください。
 ## 手順　※ComfyUIがvenvを使っている場合で解説しています
 1. ComfyUIが参照している仮想環境をアクティベートする<br>

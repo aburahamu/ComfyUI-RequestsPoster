@@ -61,7 +61,7 @@ class PostImage2X:
                 "text_consumer_secret": ("STRING", {"multiline": False}),
                 "text_access_token": ("STRING", {"multiline": False}),
                 "text_access_token_secret": ("STRING", {"multiline": False}),
-                "fsfo": ("BOOLEAN", {"default": False}), #for_super_follower_only
+                "fsfo": ("BOOLEAN", {"default": False}), #for_super_followers_only
             },
         }
 
