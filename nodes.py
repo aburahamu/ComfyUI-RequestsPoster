@@ -5,6 +5,7 @@ import folder_paths
 import numpy as np
 import os
 from PIL import Image
+import io
 from datetime import datetime
 
 # AnyType ***********************************************************************************
@@ -82,7 +83,7 @@ class PostImage2X:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "images": ("IMAGE", ),
+                "images": ("IMAGE", {}),
                 "filename_prefix": ("STRING", {"default": "PostImage2X"}),
                 "text_message": ("STRING", {"multiline": True, "default": "Image generation is complete."}),
                 "text_consumer_key": ("STRING", {"multiline": False}),
@@ -139,7 +140,7 @@ class PostImage2Discord:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "images": ("IMAGE", ),
+                "images": ("IMAGE", {}),
                 "filename_prefix": ("STRING", {"default": "PostImage2Discord"}),
                 "url": ("STRING", {"multiline": False, "default": "https://~"}),
                 "text": ("STRING", {"multiline": True, "default": "Image generation is complete."}),
@@ -174,6 +175,63 @@ class PostImage2Discord:
                     })
                 }
             )
+        return ("IMAGE")
+
+# StableDiffusion 3.0からT2Iで画像を取得
+class GetImageFromSD3byT2I:
+    def __init__(self):
+        self.output_dir = folder_paths.get_output_directory()
+        self.type = "output"
+        self.prefix_append = ""
+        self.compress_level = 4
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "key": ("STRING", {"default": "sk-xxxxx..."}),
+                "positive": ("STRING", {"multiline": True, "default": "A painting of a beautiful sunset"}),
+                "turbo": ("BOOLEAN", {"default": True}),
+                "seed": ("INT:seed", {}),
+            },
+        }
+
+    FUNCTION = "run"
+    OUTPUT_NODE = True
+    RETURN_TYPES = ()
+
+    CATEGORY = "RequestsPoster"
+
+    # Discordに投稿する関数
+    def run(self, key, positive, turbo, seed):
+        model = "sd3"
+        if turbo == True:
+            model = "sd3-turbo"
+        response = requests.post(
+            f"https://api.stability.ai/v2beta/stable-image/generate/sd3",
+            headers={
+                "authorization": f"Bearer {key}",
+                "accept": "image/*"
+            },
+            files={"none": ''},
+            data={
+                "prompt": f"{positive}",
+                "model": f"{model}",
+                "aspect_ratio": "1:1",
+                "seed": {seed},
+                "output_format": "png"
+            },
+        )
+
+        filename = datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
+        fullpath = os.path.join(self.output_dir, filename)
+        if response.status_code == 200:
+            results = list()
+            with open(f"{fullpath}", 'wb') as file:
+                file.write(response.content)
+        else:
+            raise Exception(str(response.json()))
+        
         return ()
 
 # Mappings ***********************************************************************************
@@ -181,11 +239,12 @@ NODE_CLASS_MAPPINGS = {
     "PostText": PostText,
     "PostImage2X": PostImage2X,
     "PostImage2Discord": PostImage2Discord,
-
+    "GetImageFromSD3byT2I": GetImageFromSD3byT2I,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PostText": "PostText",
     "PostImage2X": "PostImage2X",
     "PostImage2Discord": "PostImage2Discord",
+    "GetImageFromSD3byT2I": "GetImageFromSD3byT2I",
 }
