@@ -1,8 +1,11 @@
 # ComfyUI-RequestsPoster
-* 入力（any）に反応して指定のURLにrequests.post(url,{key:value})を投げられます。
-* 画像の入力に反応してDiscordのWebhookURLに文章と画像を投稿できます。
-* 画像の入力に反応してX（Twitter）に文章と画像を投稿できます。
-* X（Twitter）にポストする機能を使う場合、ComfyUIが利用するPython環境に「tweepy」モジュールが入っている必要があります。
+* 入力（any）に反応して指定のURLにrequests.post(url,{key:value})を投げられます。<br>
+* StableDiffusion3のAPIにText to Imageで画像生成リクエストを送信できます。<br>
+この機能を使用するにはStabilityAIのAPI KEYが必要です。<br>
+APIの使用にはStabilityAIのクレジットを消費するため、クレジット残高が最低で4は必要です。1,000 credits = $10<br>
+* 画像の入力に反応してDiscordのWebhookURLに文章と画像を投稿できます。<br>
+* 画像の入力に反応してX（Twitter）に文章と画像を投稿できます。<br>
+X（Twitter）にポストする機能を使う場合、ComfyUIが利用するPython環境に「tweepy」モジュールが入っている必要があります。<br>
 
 # インストール方法
 下記のどちらかでインストールできます
@@ -51,6 +54,24 @@ ComfyUI > custom_nodes > ComfyUI-RequestsPoster をコマンドプロンプト�
 3. urlにリクエストを投げたいURLをコピペする　例）ディスコードのウェブフックURL
 4. keyとvalueにそれぞれリクエストに含めたい文字列を入力する　例）key = content、value = 画像が出来ました
 5. Queueする
+
+# 使い方（StableDiffusion3に画像を生成させる）
+1. AddNode > RequestsPoster > GetImageFromSD3byT2I でノードを追加する
+2. 各パラメータを設定する
+* key: StabilityAIのAPI KEY
+* positive: ポジティブプロンプト
+* negative: ネガティブプロンプト
+* aspect_ratio: アスペクト比
+* model: モデル。sd3はクレジット6.5消費。sd3-turboはクレジット4消費
+* format: フォーマット。pngかjpg
+* seed: シード値。整数
+* control_after_generate: シード値の生成方法。通常はランダムで良い
+3. Queueする
+4. ComfyUIのoutputディレクトリに画像が保存されます。<br>
+必要に応じてノードの出力「IMAGE」から画像をPreviewなりアプコンすると良いでしょう。
+![スクリーンショット 2024-04-19 003730](https://github.com/aburahamu/ComfyUI-RequestsPoster/assets/166828042/092a72de-bd19-41ac-8491-51e9baec5669)
+5. クレジットが尽きると画像が生成されません　※尽きた場合の挙動は未調査です。
+![スクリーンショット 2024-04-19 004126](https://github.com/aburahamu/ComfyUI-RequestsPoster/assets/166828042/40ee8cfe-4778-41a6-adbd-4e456fd18b7c)
 
 # DiscordのWebhookURLの取得方法
 1. 左下の「＋」を押してサーバーを追加して、作られたサーバーの歯車アイコンを押す<br>
