@@ -4,8 +4,8 @@ import json
 import folder_paths
 import numpy as np
 import os
-from PIL import Image
-import io
+import torch
+from PIL import Image, ImageOps, ImageSequence
 from datetime import datetime
 
 # AnyType ***********************************************************************************
@@ -31,7 +31,7 @@ class ImageSaver:
             self.output_dir, 
             images[0].shape[1], 
             images[0].shape[0]
-        )
+            )
 
         # 最初の画像のみ保存する
         image = images[0]
@@ -44,6 +44,37 @@ class ImageSaver:
         img.save(fullpath, pnginfo=metadata, compress_level=self.compress_level)
 
         return fullpath
+
+# ImageLoader ***********************************************************************************
+class ImageLoader:
+    # 画像を読み込んで返す関数(LoadImageをコピペした)
+    def load_image(self, image_path):
+        img = Image.open(image_path)
+        output_images = []
+        output_masks = []
+        for i in ImageSequence.Iterator(img):
+            i = ImageOps.exif_transpose(i)
+            if i.mode == 'I':
+                i = i.point(lambda i: i * (1 / 255))
+            image = i.convert("RGB")
+            image = np.array(image).astype(np.float32) / 255.0
+            image = torch.from_numpy(image)[None,]
+            if 'A' in i.getbands():
+                mask = np.array(i.getchannel('A')).astype(np.float32) / 255.0
+                mask = 1. - torch.from_numpy(mask)
+            else:
+                mask = torch.zeros((64,64), dtype=torch.float32, device="cpu")
+            output_images.append(image)
+            output_masks.append(mask.unsqueeze(0))
+
+        if len(output_images) > 1:
+            output_image = torch.cat(output_images, dim=0)
+            output_mask = torch.cat(output_masks, dim=0)
+        else:
+            output_image = output_images[0]
+            output_mask = output_masks[0]
+
+        return (output_image, output_mask)
 
 # PostText ***********************************************************************************
 class PostText:
@@ -59,8 +90,8 @@ class PostText:
                 "value": ("STRING", {"multiline": False, "default": "Hello, World!!"}),
                 "seed": ("INT:seed", {}),
                 "any": (any, {}),
-            },
-        }
+                },
+            }
 
     FUNCTION = "run"
     OUTPUT_NODE = True
@@ -91,8 +122,8 @@ class PostImage2X:
                 "text_access_token": ("STRING", {"multiline": False}),
                 "text_access_token_secret": ("STRING", {"multiline": False}),
                 "fsfo": ("BOOLEAN", {"default": False}), #for_super_followers_only
-            },
-        }
+                },
+            }
 
     FUNCTION = "run"
     OUTPUT_NODE = True
@@ -118,7 +149,7 @@ class PostImage2X:
             consumer_secret = text_consumer_secret, 
             access_token= text_access_token, 
             access_token_secret= text_access_token_secret
-        )
+            )
 
         # 画像を保存して投稿
         image_path = ImageSaver().SaveAndGetImagePath(images=images, filename_prefix=filename_prefix)
@@ -128,7 +159,7 @@ class PostImage2X:
             text=message, 
             media_ids=[media.media_id],
             for_super_followers_only=fsfo,
-        )
+            )
         return ()
 
 # PostImage2Discord ***********************************************************************************
@@ -144,8 +175,8 @@ class PostImage2Discord:
                 "filename_prefix": ("STRING", {"default": "PostImage2Discord"}),
                 "url": ("STRING", {"multiline": False, "default": "https://~"}),
                 "text": ("STRING", {"multiline": True, "default": "Image generation is complete."}),
-            },
-        }
+                },
+            }
 
     FUNCTION = "run"
     OUTPUT_NODE = True
@@ -175,9 +206,9 @@ class PostImage2Discord:
                     })
                 }
             )
-        return ("IMAGE")
+        return ()
 
-# StableDiffusion 3.0からT2Iで画像を取得
+# StableDiffusion3からT2Iで画像を取得
 class GetImageFromSD3byT2I:
     def __init__(self):
         self.output_dir = folder_paths.get_output_directory()
@@ -191,48 +222,59 @@ class GetImageFromSD3byT2I:
             "required": {
                 "key": ("STRING", {"default": "sk-xxxxx..."}),
                 "positive": ("STRING", {"multiline": True, "default": "A painting of a beautiful sunset"}),
-                "turbo": ("BOOLEAN", {"default": True}),
+                "negative": ("STRING", {"multiline": True, "default": "nsfw, bad quality"}),
+                "aspect_ratio": (["16:9", "1:1", "21:9", "2:3", "3:2", "4:5", "5:4", "9:16", "9:21"], {"default": "1:1"}),
+                "model": (["sd3", "sd3-turbo"], {"default": "sd3-turbo"}),
+                "format": (["png", "jpeg"], {"default": "png"}),
                 "seed": ("INT:seed", {}),
             },
         }
 
     FUNCTION = "run"
     OUTPUT_NODE = True
-    RETURN_TYPES = ()
+    RETURN_TYPES = ("IMAGE", )
 
     CATEGORY = "RequestsPoster"
 
-    # Discordに投稿する関数
-    def run(self, key, positive, turbo, seed):
-        model = "sd3"
-        if turbo == True:
-            model = "sd3-turbo"
+    # 画像の生成と保存
+    def run(self, key, positive, negative, aspect_ratio, model, format, seed):
+        # 必要なパラメータをセット
+        url = f"https://api.stability.ai/v2beta/stable-image/generate/sd3"
+        headers_payload = {
+            "authorization": f"Bearer {key}",
+            "accept": "image/*"
+            }
+        data_payload = {
+            "prompt": f"{positive}",
+            "model": f"{model}",
+            "aspect_ratio": f"{aspect_ratio}",
+            "seed": {seed},
+            "output_format": f"{format}",
+            }
+        # modelがsd3ならネガティブプロンプトを追加
+        if model == "sd3":
+            data_payload["negative_prompt"] = negative
+        
+        # 画像生成を指示
         response = requests.post(
-            f"https://api.stability.ai/v2beta/stable-image/generate/sd3",
-            headers={
-                "authorization": f"Bearer {key}",
-                "accept": "image/*"
-            },
+            url, 
+            headers=headers_payload, 
             files={"none": ''},
-            data={
-                "prompt": f"{positive}",
-                "model": f"{model}",
-                "aspect_ratio": "1:1",
-                "seed": {seed},
-                "output_format": "png"
-            },
-        )
+            data=data_payload
+            )
 
+        # 画像を保存
         filename = datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
         fullpath = os.path.join(self.output_dir, filename)
         if response.status_code == 200:
-            results = list()
             with open(f"{fullpath}", 'wb') as file:
                 file.write(response.content)
+            loader = ImageLoader()
+            image, mask = loader.load_image(image_path=fullpath)
         else:
             raise Exception(str(response.json()))
         
-        return ()
+        return (image, mask)
 
 # Mappings ***********************************************************************************
 NODE_CLASS_MAPPINGS = {
@@ -240,11 +282,11 @@ NODE_CLASS_MAPPINGS = {
     "PostImage2X": PostImage2X,
     "PostImage2Discord": PostImage2Discord,
     "GetImageFromSD3byT2I": GetImageFromSD3byT2I,
-}
+    }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PostText": "PostText",
     "PostImage2X": "PostImage2X",
     "PostImage2Discord": "PostImage2Discord",
     "GetImageFromSD3byT2I": "GetImageFromSD3byT2I",
-}
+    }
