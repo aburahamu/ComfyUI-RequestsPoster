@@ -60,7 +60,7 @@ ComfyUI > custom_nodes > ComfyUI-RequestsPoster をコマンドプロンプト�
 2. 各パラメータを設定する
 * key: StabilityAIのAPI KEY
 * positive: ポジティブプロンプト
-* negative: ネガティブプロンプト
+* negative: ネガティブプロンプト。※modelがsd3-turboの場合は適用されません。
 * aspect_ratio: アスペクト比
 * model: モデル。sd3はクレジット6.5消費。sd3-turboはクレジット4消費
 * format: フォーマット。pngかjpg
@@ -150,3 +150,12 @@ https://developer.twitter.com
 * Access Token and Secretのボタン「Generate」を押すとキーが2個表示される
 
 完了です。
+
+# 著者
+[aburahamu](https://twitter.com/aburahamu_aa)
+
+# ライセンス
+AGPL-3.0
+
+# 謝辞
+[D̷ELL](https://twitter.com/xqdior)：協力ありがとう
