@@ -208,7 +208,7 @@ class PostImage2Discord:
             )
         return ()
 
-# StableDiffusion3からT2Iで画像を取得
+# StableDiffusion3からT2Iで画像を取得 ***********************************************************************************
 class GetImageFromSD3byT2I:
     def __init__(self):
         self.output_dir = folder_paths.get_output_directory()
@@ -276,12 +276,91 @@ class GetImageFromSD3byT2I:
         
         return (image, mask)
 
+# GetImageFromSD3byI2I ***********************************************************************************
+class GetImageFromSD3byI2I:
+    def __init__(self):
+        self.output_dir = folder_paths.get_output_directory()
+        self.type = "output"
+        self.prefix_append = ""
+        self.compress_level = 4
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "images": ("IMAGE", {}),
+                "key": ("STRING", {"default": "sk-xxxxx..."}),
+                "positive": ("STRING", {"multiline": True, "default": "A painting of a beautiful sunset"}),
+                "negative": ("STRING", {"multiline": True, "default": "nsfw, bad quality"}),
+                "strength": ("FLOAT", {"default": 0.5, "min":0, "max": 1, "step":0.01}),
+                "model": (["sd3", "sd3-turbo"], {"default": "sd3-turbo"}),
+                "format": (["png", "jpeg"], {"default": "png"}),
+                "seed": ("INT:seed", {}),
+                },
+            }
+
+    FUNCTION = "run"
+    OUTPUT_NODE = True
+    RETURN_TYPES = ("IMAGE",)
+
+    CATEGORY = "RequestsPoster"
+
+    # Discordに投稿する関数
+    def run(self, key, positive, images, strength, model, seed, format, negative):
+        # 画像のサイズチェック
+        img = None
+        if images[0].shape[0] >= 64 and images[0].shape[1] >= 64:
+            # 画像を保存する
+            image_path = ImageSaver().SaveAndGetImagePath(images=images, filename_prefix="SD3I2I")
+        else:
+            raise Exception(f"画像サイズエラー：画像の縦横サイズを、いずれも64px以上にしてください。")
+
+        # 必要なパラメータをセット
+        url = f"https://api.stability.ai/v2beta/stable-image/generate/sd3"
+        headers_payload = {
+            "authorization": f"Bearer {key}",
+            "accept": "image/*"
+            }
+        data_payload = {
+            "prompt": f"{positive}",
+            "strength": strength,
+            "mode": "image-to-image",
+            "model": f"{model}",
+            "seed": {seed},
+            "output_format": f"{format}",
+            }
+        # modelがsd3ならネガティブプロンプトを追加
+        if model == "sd3":
+            data_payload["negative_prompt"] = negative
+        
+        # 画像生成を指示
+        response = requests.post(
+            url, 
+            headers=headers_payload, 
+            files={"image": open(image_path, "rb")},
+            data=data_payload
+            )
+
+        # 画像を保存
+        filename = datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
+        fullpath = os.path.join(self.output_dir, filename)
+        if response.status_code == 200:
+            with open(f"{fullpath}", 'wb') as file:
+                file.write(response.content)
+            loader = ImageLoader()
+            image, mask = loader.load_image(image_path=fullpath)
+        else:
+            raise Exception(f"{response.json()}")
+        
+        return (image, mask)
+
 # Mappings ***********************************************************************************
 NODE_CLASS_MAPPINGS = {
     "PostText": PostText,
     "PostImage2X": PostImage2X,
     "PostImage2Discord": PostImage2Discord,
     "GetImageFromSD3byT2I": GetImageFromSD3byT2I,
+    "GetImageFromSD3byI2I": GetImageFromSD3byI2I,
     }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -289,4 +368,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "PostImage2X": "PostImage2X",
     "PostImage2Discord": "PostImage2Discord",
     "GetImageFromSD3byT2I": "GetImageFromSD3byT2I",
+    "GetImageFromSD3byI2I": "GetImageFromSD3byI2I",
     }

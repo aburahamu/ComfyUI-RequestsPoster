@@ -1,6 +1,6 @@
 # ComfyUI-RequestsPoster
 * 入力（any）に反応して指定のURLにrequests.post(url,{key:value})を投げられます。<br>
-* StableDiffusion3のAPIにText to Imageで画像生成リクエストを送信できます。<br>
+* StableDiffusion3のAPIにText to ImageまたはImage to Imageで画像生成リクエストを送信できます。<br>
 この機能を使用するにはStabilityAIのAPI KEYが必要です。<br>
 APIの使用にはStabilityAIのクレジットを消費するため、クレジット残高が最低で4は必要です。1,000 credits = $10<br>
 * 画像の入力に反応してDiscordのWebhookURLに文章と画像を投稿できます。<br>
@@ -62,6 +62,7 @@ ComfyUI > custom_nodes > ComfyUI-RequestsPoster をコマンドプロンプト�
 * positive: ポジティブプロンプト
 * negative: ネガティブプロンプト。※modelがsd3-turboの場合は適用されません。
 * aspect_ratio: アスペクト比
+* strength: ノイズ除去強度。0で入力画像がそのまま返る。1で画像なしから生成と同じ。0.6以上だと結構変わる
 * model: モデル。sd3はクレジット6.5消費。sd3-turboはクレジット4消費
 * format: フォーマット。pngかjpg
 * seed: シード値。整数
