@@ -8,7 +8,16 @@ APIの使用にはStabilityAIのクレジットを消費するため、クレジ
 X（Twitter）にポストする機能を使う場合、ComfyUIが利用するPython環境に「tweepy」モジュールが入っている必要があります。<br>
 
 # インストール方法
-下記のどちらかでインストールできます
+下記のいずれかでインストールできます
+* ComfyUI-Manegerの「Install Custom Nodes」から検索してインストールする
+1. Managerを起動<br>
+![01_Manager](https://github.com/aburahamu/ComfyUI-RequestsPoster/assets/166828042/52b25866-9b46-415c-9eef-61cf5f67caf2)
+2. Install Custom Nodesを押す<br>
+![02_Install](https://github.com/aburahamu/ComfyUI-RequestsPoster/assets/166828042/37eff2a8-319e-44bd-b3b2-c9e0577483c7)
+3. 「requests」と検索してComfyUI-RequestPosterの右側にある「Install」を押す<br>
+![03_Request](https://github.com/aburahamu/ComfyUI-RequestsPoster/assets/166828042/9c141859-87f4-4ab9-ba16-50363a386258)
+現時点で2つありますがどちらでも良いです。
+
 * ComfyUI-Managerの「Install via Git URL」でこのリポジトリのクローン用URLをコピペする<br>
 クローン用URLはこのページの上部にある緑色のボタン「<> Code」を押すと表示されます。
 * ComfyUI > Cutom_nodesのフォルダをコマンドプロンプトで開き下記コマンドを実行する<br>
