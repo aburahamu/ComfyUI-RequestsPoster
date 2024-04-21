@@ -9,17 +9,21 @@ X（Twitter）にポストする機能を使う場合、ComfyUIが利用するPy
 
 # インストール方法
 下記のいずれかでインストールできます
+## 簡単な方法
 * ComfyUI-Manegerの「Install Custom Nodes」から検索してインストールする
 1. Managerを起動<br>
-![01_Manager](https://github.com/aburahamu/ComfyUI-RequestsPoster/assets/166828042/52b25866-9b46-415c-9eef-61cf5f67caf2)
+![01_Manager](https://github.com/aburahamu/ComfyUI-RequestsPoster/assets/166828042/3610684b-8d5f-48b2-9848-f3a275aca6a9)
 2. Install Custom Nodesを押す<br>
-![02_Install](https://github.com/aburahamu/ComfyUI-RequestsPoster/assets/166828042/37eff2a8-319e-44bd-b3b2-c9e0577483c7)
+![02_Install](https://github.com/aburahamu/ComfyUI-RequestsPoster/assets/166828042/35115d46-b53b-4308-b964-45740f621f8a)
 3. 「requests」と検索してComfyUI-RequestPosterの右側にある「Install」を押す<br>
-![03_Request](https://github.com/aburahamu/ComfyUI-RequestsPoster/assets/166828042/9c141859-87f4-4ab9-ba16-50363a386258)
+![03_Request](https://github.com/aburahamu/ComfyUI-RequestsPoster/assets/166828042/5410e84f-6635-45e1-814a-2b218a2a972a)
 現時点で2つありますがどちらでも良いです。
 
+## URLをコピペしてインストールする方法
 * ComfyUI-Managerの「Install via Git URL」でこのリポジトリのクローン用URLをコピペする<br>
 クローン用URLはこのページの上部にある緑色のボタン「<> Code」を押すと表示されます。
+
+## git cloneする方法
 * ComfyUI > Cutom_nodesのフォルダをコマンドプロンプトで開き下記コマンドを実行する<br>
 `git clone https://github.com/aburahamu/ComfyUI-RequestsPoster.git`
 
