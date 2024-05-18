@@ -90,6 +90,7 @@ class PostText:
                 "value": ("STRING", {"multiline": False, "default": "Hello, World!!"}),
                 "seed": ("INT:seed", {}),
                 "any": (any, {}),
+                "execute": ("BOOLEAN", {"default": True}),
                 },
             }
 
@@ -99,10 +100,11 @@ class PostText:
 
     CATEGORY = "RequestsPoster"
 
-    def run(self, url, key, value, seed, any):
-        data = {key: value}
-        response = requests.post(url, data)
-        print(response)
+    def run(self, url, key, value, seed, execute, any):
+        if execute:
+            data = {key: value}
+            response = requests.post(url, data)
+            print(response)
         return ()
 
 # PostImage2X ***********************************************************************************
@@ -121,7 +123,8 @@ class PostImage2X:
                 "text_consumer_secret": ("STRING", {"multiline": False}),
                 "text_access_token": ("STRING", {"multiline": False}),
                 "text_access_token_secret": ("STRING", {"multiline": False}),
-                "fsfo": ("BOOLEAN", {"default": False}), #for_super_followers_only
+                "fsfo": ("BOOLEAN", {"default": False}), #for_super_followers_only,
+                "execute": ("BOOLEAN", {"default": True}),
                 },
             }
 
@@ -137,29 +140,32 @@ class PostImage2X:
             text_consumer_secret, 
             text_access_token, 
             text_access_token_secret, 
-            filename_prefix="PostImage2X"):
-        # TweepyのAPIオブジェクトを作成
-        auth = tweepy.OAuthHandler(text_consumer_key, text_consumer_secret)
-        auth.set_access_token(text_access_token, text_access_token_secret)
+            execute,
+            filename_prefix="PostImage2X",
+            ):
+        if execute:
+            # TweepyのAPIオブジェクトを作成
+            auth = tweepy.OAuthHandler(text_consumer_key, text_consumer_secret)
+            auth.set_access_token(text_access_token, text_access_token_secret)
 
-        # TweepyのAPIとClientオブジェクトを作成
-        api = tweepy.API(auth)
-        client = tweepy.Client(
-            consumer_key = text_consumer_key, 
-            consumer_secret = text_consumer_secret, 
-            access_token= text_access_token, 
-            access_token_secret= text_access_token_secret
-            )
+            # TweepyのAPIとClientオブジェクトを作成
+            api = tweepy.API(auth)
+            client = tweepy.Client(
+                consumer_key = text_consumer_key, 
+                consumer_secret = text_consumer_secret, 
+                access_token= text_access_token, 
+                access_token_secret= text_access_token_secret
+                )
 
-        # 画像を保存して投稿
-        image_path = ImageSaver().SaveAndGetImagePath(images=images, filename_prefix=filename_prefix)
-        message = text_message
-        media = api.media_upload(filename=image_path)
-        result = client.create_tweet(
-            text=message, 
-            media_ids=[media.media_id],
-            for_super_followers_only=fsfo,
-            )
+            # 画像を保存して投稿
+            image_path = ImageSaver().SaveAndGetImagePath(images=images, filename_prefix=filename_prefix)
+            message = text_message
+            media = api.media_upload(filename=image_path)
+            result = client.create_tweet(
+                text=message, 
+                media_ids=[media.media_id],
+                for_super_followers_only=fsfo,
+                )
         return ()
 
 # PostImage2Discord ***********************************************************************************
@@ -175,6 +181,7 @@ class PostImage2Discord:
                 "filename_prefix": ("STRING", {"default": "PostImage2Discord"}),
                 "url": ("STRING", {"multiline": False, "default": "https://~"}),
                 "text": ("STRING", {"multiline": True, "default": "Image generation is complete."}),
+                "execute": ("BOOLEAN", {"default": True}),
                 },
             }
 
@@ -185,27 +192,28 @@ class PostImage2Discord:
     CATEGORY = "RequestsPoster"
 
     # Discordに投稿する関数
-    def run(self, images, url, text, filename_prefix="PostImage2Discord"):
-        # 画像を保存する
-        image_path = ImageSaver().SaveAndGetImagePath(images=images, filename_prefix=filename_prefix)
+    def run(self, images, url, text, execute, filename_prefix="PostImage2Discord"):
+        if execute:
+            # 画像を保存する
+            image_path = ImageSaver().SaveAndGetImagePath(images=images, filename_prefix=filename_prefix)
 
-        # ファイルをバイナリモードで開く
-        with open(image_path, 'rb') as f:
-            # POSTリクエストを送信
-            response = requests.post(
-                url,
-                files={
-                    'file': (image_path, f, 'image/png')
-                },
-                data={
-                    'payload_json': json.dumps({
-                        'content': text,
-                        'embeds': [{
-                            'image': {'url': 'attachment://' + image_path}
-                        }]
-                    })
-                }
-            )
+            # ファイルをバイナリモードで開く
+            with open(image_path, 'rb') as f:
+                # POSTリクエストを送信
+                response = requests.post(
+                    url,
+                    files={
+                        'file': (image_path, f, 'image/png')
+                    },
+                    data={
+                        'payload_json': json.dumps({
+                            'content': text,
+                            'embeds': [{
+                                'image': {'url': 'attachment://' + image_path}
+                            }]
+                        })
+                    }
+                )
         return ()
 
 # StableDiffusion3からT2Iで画像を取得 ***********************************************************************************
@@ -296,6 +304,7 @@ class GetImageFromSD3byI2I:
                 "model": (["sd3", "sd3-turbo"], {"default": "sd3-turbo"}),
                 "format": (["png", "jpeg"], {"default": "png"}),
                 "seed": ("INT:seed", {}),
+                "execute": ("BOOLEAN", {"default": True}),
                 },
             }
 
@@ -306,53 +315,54 @@ class GetImageFromSD3byI2I:
     CATEGORY = "RequestsPoster"
 
     # Discordに投稿する関数
-    def run(self, key, positive, images, strength, model, seed, format, negative):
-        # 画像のサイズチェック
-        img = None
-        if images[0].shape[0] >= 64 and images[0].shape[1] >= 64:
-            # 画像を保存する
-            image_path = ImageSaver().SaveAndGetImagePath(images=images, filename_prefix="SD3I2I")
-        else:
-            raise Exception(f"画像サイズエラー：画像の縦横サイズを、いずれも64px以上にしてください。")
+    def run(self, key, positive, images, strength, model, seed, format, negative, execute):
+        if execute:
+            # 画像のサイズチェック
+            img = None
+            if images[0].shape[0] >= 64 and images[0].shape[1] >= 64:
+                # 画像を保存する
+                image_path = ImageSaver().SaveAndGetImagePath(images=images, filename_prefix="SD3I2I")
+            else:
+                raise Exception(f"画像サイズエラー：画像の縦横サイズを、いずれも64px以上にしてください。")
 
-        # 必要なパラメータをセット
-        url = f"https://api.stability.ai/v2beta/stable-image/generate/sd3"
-        headers_payload = {
-            "authorization": f"Bearer {key}",
-            "accept": "image/*"
-            }
-        data_payload = {
-            "prompt": f"{positive}",
-            "strength": strength,
-            "mode": "image-to-image",
-            "model": f"{model}",
-            "seed": {seed},
-            "output_format": f"{format}",
-            }
-        # modelがsd3ならネガティブプロンプトを追加
-        if model == "sd3":
-            data_payload["negative_prompt"] = negative
-        
-        # 画像生成を指示
-        response = requests.post(
-            url, 
-            headers=headers_payload, 
-            files={"image": open(image_path, "rb")},
-            data=data_payload
-            )
+            # 必要なパラメータをセット
+            url = f"https://api.stability.ai/v2beta/stable-image/generate/sd3"
+            headers_payload = {
+                "authorization": f"Bearer {key}",
+                "accept": "image/*"
+                }
+            data_payload = {
+                "prompt": f"{positive}",
+                "strength": strength,
+                "mode": "image-to-image",
+                "model": f"{model}",
+                "seed": {seed},
+                "output_format": f"{format}",
+                }
+            # modelがsd3ならネガティブプロンプトを追加
+            if model == "sd3":
+                data_payload["negative_prompt"] = negative
+            
+            # 画像生成を指示
+            response = requests.post(
+                url, 
+                headers=headers_payload, 
+                files={"image": open(image_path, "rb")},
+                data=data_payload
+                )
 
-        # 画像を保存
-        filename = datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
-        fullpath = os.path.join(self.output_dir, filename)
-        if response.status_code == 200:
-            with open(f"{fullpath}", 'wb') as file:
-                file.write(response.content)
-            loader = ImageLoader()
-            image, mask = loader.load_image(image_path=fullpath)
-        else:
-            raise Exception(f"{response.json()}")
-        
-        return (image, mask)
+            # 画像を保存
+            filename = datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
+            fullpath = os.path.join(self.output_dir, filename)
+            if response.status_code == 200:
+                with open(f"{fullpath}", 'wb') as file:
+                    file.write(response.content)
+                loader = ImageLoader()
+                image, mask = loader.load_image(image_path=fullpath)
+            else:
+                raise Exception(f"{response.json()}")
+            
+            return (image, mask)
 
 # Mappings ***********************************************************************************
 NODE_CLASS_MAPPINGS = {
