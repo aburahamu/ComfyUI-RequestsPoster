@@ -1,0 +1,15 @@
+[project]
+name = "comfyui-requestsposter"
+description = "This extension can send HTTP Requests. You can request image generation to StableDiffusion3 and post images to X (Twitter) and Discord."
+version = "1.0.0"
+license = "LICENSE"
+dependencies = ["requests", "tweepy", "Pillow", "numpy", "torch"]
+
+[project.urls]
+Repository = "https://github.com/aburahamu/ComfyUI-RequestsPoster"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "ComfyUI-RequestsPoster"
+Icon = ""
